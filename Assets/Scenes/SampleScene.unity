@@ -688,7 +688,12 @@ MonoBehaviour:
   moveSpeed: 10
   jumpForce: 25
   wallMoveSpeed: 10
+  wallDetachCheckDistance: 0.5
+  climbOverThreshold: 0.2
   isGrounded: 0
+  isWallAttached: 0
+  canAttachToWall: 0
+  tryAttachToWall: 0
 --- !u!54 &1198581627
 Rigidbody:
   m_ObjectHideFlags: 0
