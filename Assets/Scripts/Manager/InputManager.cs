@@ -37,8 +37,8 @@ namespace Manager.InputManager
         {
             horizontal = Input.GetAxisRaw("Horizontal");
             vertical = Input.GetAxisRaw("Vertical");
-            jump = Input.GetKeyDown(KeyCode.LeftAlt);
-            wallAttach = Input.GetKeyDown(KeyCode.C);
+            jump = Input.GetKey(KeyCode.LeftAlt);
+            wallAttach = Input.GetKey(KeyCode.C);
         }
     }
 }
