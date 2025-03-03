@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4f290245ef6dfdc4ab391e00d09815da
+timeCreated: 1499679841
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Materials/Porky.mat
+  uploadId: 189281

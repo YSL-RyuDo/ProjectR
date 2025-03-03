@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6cb1bf40c748cb94988efd765f8f1eb7
+timeCreated: 1499679841
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Materials/Fox.mat
+  uploadId: 189281

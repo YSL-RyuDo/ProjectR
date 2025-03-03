@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 50c5533b43a36734c89acb4229df2b2e
+timeCreated: 1490980275
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Scripts/WovenKidExample.cs
+  uploadId: 189281

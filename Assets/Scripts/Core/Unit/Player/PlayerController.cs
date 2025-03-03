@@ -29,9 +29,11 @@ namespace Core.Unit.Player
 
         private Vector3 wallNormal; //벽의 방향
 
+        Animator animator;
      
         public enum playerState
         {
+            Idle,
             Move,
             Jump,
             Climb
@@ -42,7 +44,8 @@ namespace Core.Unit.Player
         // Start is called before the first frame update
         void Start()
         {
-            rigid = GetComponent<Rigidbody>();  
+            rigid = GetComponent<Rigidbody>(); 
+            animator = GetComponent<Animator>();
         }
 
         // Update is called once per frame
@@ -50,6 +53,20 @@ namespace Core.Unit.Player
         {
 
             HandleMovement();
+
+            if (state == playerState.Idle)
+            {
+                animator.SetBool("Walk", false);
+            }
+            else if (state == playerState.Move)
+            {
+                animator.SetBool("Walk", true);
+            }
+            else if (state == playerState.Climb)
+            {
+                animator.SetBool("Walk", false);
+                animator.SetBool("Climb", true);
+            }
 
 
             // 벽과 충돌한 상태에서 C 키를 누르면 벽에 붙기
@@ -64,6 +81,7 @@ namespace Core.Unit.Player
             float moveX = InputManager.instance.horizontal; // 좌우 입력
             float moveZ = InputManager.instance.vertical;   // 앞뒤 입력 (벽에선 위아래로 변환)
             bool jump = InputManager.instance.jump;
+
 
             // 점프 중일 때는 이동을 막음
             if (state == playerState.Jump)
@@ -85,6 +103,8 @@ namespace Core.Unit.Player
                 moveDirection = Vector3.ProjectOnPlane(new Vector3(moveX, moveZ, 0), wallNormal);
 
                 rigid.velocity = moveDirection;
+
+               
 
                 if (jump)
                 {
@@ -125,11 +145,14 @@ namespace Core.Unit.Player
             // 일반 이동 로직
             rigid.velocity = new Vector3(moveX * moveSpeed, rigid.velocity.y, moveZ * moveSpeed);
 
+            
+
             if (jump && isGrounded)
             {
                 rigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 isGrounded = false;
-                state = playerState.Jump;   
+                state = playerState.Jump;
+                animator.SetTrigger("Jump");
             }
 
         }

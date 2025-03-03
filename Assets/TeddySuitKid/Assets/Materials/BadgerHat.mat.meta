@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4195d8f2fccd05445b8cfec38648ae90
+timeCreated: 1499683692
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Materials/BadgerHat.mat
+  uploadId: 189281

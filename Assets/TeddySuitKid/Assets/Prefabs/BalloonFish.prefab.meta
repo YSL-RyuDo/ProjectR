@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: de2c45cecc5231147a9769eba8c06a86
+timeCreated: 1499704440
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Prefabs/BalloonFish.prefab
+  uploadId: 189281

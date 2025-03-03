@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 8a4128e07607fab40833c468e5412999
+timeCreated: 1499679841
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Materials/GreenBearHat.mat
+  uploadId: 189281

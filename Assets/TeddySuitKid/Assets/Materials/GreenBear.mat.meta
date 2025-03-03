@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f2805f4ca12d7ec41a7109a9eee2c770
+timeCreated: 1499679841
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Materials/GreenBear.mat
+  uploadId: 189281

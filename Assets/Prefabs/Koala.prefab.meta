@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 93591abefa6175b4181818e528245c06
+timeCreated: 1499704414
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Prefabs/Koala.prefab
+  uploadId: 189281

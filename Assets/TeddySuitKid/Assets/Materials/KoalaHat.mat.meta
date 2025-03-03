@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: cb484d8ead0291442ad6434b2079990d
+timeCreated: 1499684286
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Materials/KoalaHat.mat
+  uploadId: 189281

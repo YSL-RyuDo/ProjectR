@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 77a6cc839b5a5e244a14af6298d729d3
+timeCreated: 1499695427
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Animator/WovenKidGreenBear.controller
+  uploadId: 189281

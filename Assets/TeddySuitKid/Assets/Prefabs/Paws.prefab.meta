@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: ca411b78432ff92488532ecf2511c47c
+timeCreated: 1499704528
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Prefabs/Paws.prefab
+  uploadId: 189281
