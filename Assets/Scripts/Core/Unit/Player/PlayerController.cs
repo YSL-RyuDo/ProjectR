@@ -1,9 +1,9 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 //
-//InputManage »ç¿ëÀ» À§ÇÑ ³×ÀÓ½ºÆäÀÌ½º
+//InputManage ì‚¬ìš©ì„ ìœ„í•œ ë„¤ì„ìŠ¤í˜ì´ìŠ¤
 using Manager.InputManager;
 
 namespace Core.Unit.Player
@@ -11,28 +11,31 @@ namespace Core.Unit.Player
     public class PlayerController : MonoBehaviour
     {
         public float moveSpeed = 5f;
-        public float jumpHeight = 2f; //µ¹·Áº¸¸é¼­ ¿£Áø¿¡¼­ º¯µ¿
+        public float jumpHeight = 2f; //ëŒë ¤ë³´ë©´ì„œ ì—”ì§„ì—ì„œ ë³€ë™
         public float gravity = -9.81f;
 
-        public float wallHangGravity = 0f; //º®¿¡ ¸Å´Ş·ÈÀ» ¶© Áß·Â Àû¿ë ¾ÈµÇ°Ô
-        public float wallClimbSpeed = 2f;   // º®¿¡¼­ À§/¾Æ·¡ ÀÌµ¿ ¼Óµµ
-        public float wallSideMoveSpeed = 2f; // º®¿¡¼­ ÁÂ¿ì ÀÌµ¿ ¼Óµµ
+        public float wallHangGravity = 0f; //ë²½ì— ë§¤ë‹¬ë ¸ì„ ë• ì¤‘ë ¥ ì ìš© ì•ˆë˜ê²Œ
+        public float wallClimbSpeed = 2f;   // ë²½ì—ì„œ ìœ„/ì•„ë˜ ì´ë™ ì†ë„
+        public float wallSideMoveSpeed = 2f; // ë²½ì—ì„œ ì¢Œìš° ì´ë™ ì†ë„
 
 
         public float rotationSpeed = 10f;
 
-        private Vector3 velocity; //ÀÌµ¿ ¼Óµµ
+        private Vector3 velocity; //ì´ë™ ì†ë„
 
-        private Vector3 wallNormal; //º® ¹æÇâ ÀúÀå
+        private Vector3 wallNormal; //ë²½ ë°©í–¥ ì €ì¥
 
 
         [SerializeField]
-        private bool isGrounded; //Áö¸é È®ÀÎ
+        private bool isGrounded; //ì§€ë©´ í™•ì¸
         [SerializeField]
-        private bool isWallHanging = false; //º®¿¡ ¸Å´Ş·È´ÂÁö È®ÀÎ
+        private bool isJumped;
         [SerializeField]
-        private bool isTouchingWall; //º®¿¡ ´ê¾Ò´ÂÁö È®ÀÎ
+        private bool isWallHanging = false; //ë²½ì— ë§¤ë‹¬ë ¸ëŠ”ì§€ í™•ì¸
+        [SerializeField]
+        private bool isTouchingWall; //ë²½ì— ë‹¿ì•˜ëŠ”ì§€ í™•ì¸
 
+      
 
         private Animator animator;
 
@@ -67,7 +70,7 @@ namespace Core.Unit.Player
 
         void HandleMovement()
         {
-            //´Ş¸®±â »óÅÂ¸é ÀÌµ¿¼ÓµµÀÇ 150%, ¾Æ´Ï¸é ±âº» ¼Óµµ
+            //ë‹¬ë¦¬ê¸° ìƒíƒœë©´ ì´ë™ì†ë„ì˜ 150%, ì•„ë‹ˆë©´ ê¸°ë³¸ ì†ë„
             float speed = InputManager.instance.sprint ? moveSpeed * 1.5f : moveSpeed;
             Vector3 move = new Vector3(InputManager.instance.horizontal, 0, InputManager.instance.vertical).normalized;
 
@@ -79,6 +82,13 @@ namespace Core.Unit.Player
 
                 controller.Move(move * speed * Time.deltaTime);
             }
+
+            if(!isWallHanging)
+            {
+                float moveSpeedValue = move.magnitude * speed;
+                animator.SetFloat("MoveSpeed", moveSpeedValue);
+            }
+            
         }
 
         void HandleJump()
@@ -86,18 +96,21 @@ namespace Core.Unit.Player
             if(isGrounded && InputManager.instance.jump)
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                isJumped = true;
+                animator.SetTrigger("Jump");
             }
         }
 
         void HandleGroundCheck()
         {
             RaycastHit hit;
-            float rayLength = 0.3f;  // Ray ±æÀÌ Á¶Á¤
+            float rayLength = 0.3f;  // Ray ê¸¸ì´ ì¡°ì •
 
             isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, rayLength);
 
             if(isGrounded)
             {
+                isJumped = false;
                 isWallHanging = false;
             }
         }
@@ -105,75 +118,85 @@ namespace Core.Unit.Player
         void HandleWallCheck()
         {
             RaycastHit hit;
+            float wallRayLength = 0.75f; // ë²½ ê°ì§€ ê±°ë¦¬
+            Vector3 rayStart = transform.position; // Raycast ì‹œì‘ ìœ„ì¹˜
 
-            float wallRayLength = 0.9f;
+            // ë²½ ê°ì§€ Rayë¥¼ ë””ë²„ê¹…ìš©ìœ¼ë¡œ ì‹œê°í™”
+            Debug.DrawRay(rayStart, transform.forward * wallRayLength, Color.red, 0.1f);
 
-            //ÇÃ·¹ÀÌ¾î ¾Õ¿¡ ÁöÇüÀÎµ¥ º®Ã³·³ ³ôÀ¸¸é ºÙ°Ô ÇÔ
-            if(Physics.Raycast(transform.position, transform.forward, out hit, wallRayLength))
+
+            //í”Œë ˆì´ì–´ ì•ì— ì§€í˜•ì¸ë° ë²½ì²˜ëŸ¼ ë†’ìœ¼ë©´ ë¶™ê²Œ í•¨
+            if (Physics.Raycast(rayStart, transform.forward, out hit, wallRayLength))
             {
-                if (hit.collider.CompareTag("Ground"))  // º®ÀÌ Ground ÅÂ±×¸é ¸Å´Ş¸®±â °¡´É
+                
+                if (hit.collider.CompareTag("Ground"))  // ë²½ì´ Ground íƒœê·¸ë©´ ë§¤ë‹¬ë¦¬ê¸° ê°€ëŠ¥
                 {
                     isTouchingWall = true;
-                    wallNormal = hit.normal; // º® ¹æÇâ ÀúÀå
+                    wallNormal = hit.normal; // ë²½ ë°©í–¥ ì €ì¥
 
-                    if (!isGrounded && velocity.y < 0) // °øÁß¿¡¼­ º®¿¡ ºÎµúÇûÀ» ¶§
+                    if (!isGrounded && isJumped) // ê³µì¤‘ì—ì„œ ë²½ì— ë¶€ë”ªí˜”ì„ ë•Œ
                     {
                         isWallHanging = true;
-                        velocity.y = 0; // Áß·Â Á¦°Å
+                        velocity.y = 0; // ì¤‘ë ¥ ì œê±°
+
+                        animator.SetBool("WallHanging", true);
                     }
 
 
                     if (isGrounded && InputManager.instance.wallAttach)
                     {
                         isWallHanging = true;
-                        velocity = Vector3.zero; // Áß·Â Á¦°Å ¹× ¿òÁ÷ÀÓ Á¤Áö
+                        velocity = Vector3.zero; // ì¤‘ë ¥ ì œê±° ë° ì›€ì§ì„ ì •ì§€
+                        animator.SetBool("WallHanging", true);
+
                     }
                 }
             }
             else
             {
                 isTouchingWall = false;
+                animator.SetBool("WallHanging", false);
             }
         }
 
         void HandleWallHangMovement()
         {
-            // º® ¸Å´Ş¸± ¶§ Áß·Â Á¦°Å
+            // ë²½ ë§¤ë‹¬ë¦´ ë•Œ ì¤‘ë ¥ ì œê±°
             velocity.y = wallHangGravity;
-            controller.Move(Vector3.zero); // ±âº» ÀÌµ¿ ¹æÁö
+            controller.Move(Vector3.zero); // ê¸°ë³¸ ì´ë™ ë°©ì§€
+            isJumped = false;
 
-            // À§/¾Æ·¡(Á¡ÇÁ ¹öÆ° & ¾Æ·¡ ÀÌµ¿ Å°) ÀÌµ¿
+            // ìœ„/ì•„ë˜(ì í”„ ë²„íŠ¼ & ì•„ë˜ ì´ë™ í‚¤) ì´ë™
             float verticalMove = InputManager.instance.vertical * wallClimbSpeed * Time.deltaTime;
 
-            // ÁÂ¿ì ÀÌµ¿ (º®¿¡ ¸Å´Ş·Á¼­ ÁÂ¿ì·Î ÀÌµ¿ °¡´É)
+            // ì¢Œìš° ì´ë™ (ë²½ì— ë§¤ë‹¬ë ¤ì„œ ì¢Œìš°ë¡œ ì´ë™ ê°€ëŠ¥)
             float horizontalMove = InputManager.instance.horizontal * wallSideMoveSpeed * Time.deltaTime;
 
-            // ÇÃ·¹ÀÌ¾î°¡ º®À» ±âÁØÀ¸·Î À§/¾Æ·¡/ÁÂ¿ì ÀÌµ¿ °¡´ÉÇÏµµ·Ï ÇÔ
+            // í”Œë ˆì´ì–´ê°€ ë²½ì„ ê¸°ì¤€ìœ¼ë¡œ ìœ„/ì•„ë˜/ì¢Œìš° ì´ë™ ê°€ëŠ¥í•˜ë„ë¡ í•¨
             Vector3 wallMove = (Vector3.up * verticalMove) + (transform.right * horizontalMove);
             controller.Move(wallMove);
 
-            // º®¿¡¼­ ÀÌµ¿ÇÒ ¶§ ¾Ö´Ï¸ŞÀÌ¼Ç Ãß°¡ °¡´É (ex: animator.SetFloat("WallMove", Mathf.Abs(verticalMove) + Mathf.Abs(horizontalMove)))
-
-            // ¹æÇâÅ° ¹İ´ë·Î ´©¸£¸é º® ¸Å´Ş¸®±â ÇØÁ¦
-            if (InputManager.instance.horizontal * wallNormal.x > 0)
+            if (InputManager.instance.jump)
             {
                 isWallHanging = false;
+
+                animator.SetTrigger("WallJump");
             }
 
-            // ? ÀÌµ¿ ÈÄ º®ÀÌ ÀÖ´ÂÁö ´Ù½Ã °Ë»ç (¾øÀ¸¸é ¶³¾îÁü)
+            // ë²½ì´ ì—†ìœ¼ë©´ ë–¨ì–´ì§
             if (!isTouchingWall)
             {
+                animator.SetBool("WallHanging", false);
                 isWallHanging = false;
                 return;
             }
 
         }
 
-
-        //Áß·Â Àû¿ë, CharacterController´Â rigidbody¿Í ´Ù¸£°Ô ÀÚµ¿ Áß·Â Àû¿ëÀÌ ¾Æ´Ô
+        //ì¤‘ë ¥ ì ìš©, CharacterControllerëŠ” rigidbodyì™€ ë‹¤ë¥´ê²Œ ìë™ ì¤‘ë ¥ ì ìš©ì´ ì•„ë‹˜
         void ApplyGravity()
         {
-            velocity.y += gravity * Time.deltaTime; // Áö¼ÓÀûÀ¸·Î Áß·Â Àû¿ë
+            velocity.y += gravity * Time.deltaTime; // ì§€ì†ì ìœ¼ë¡œ ì¤‘ë ¥ ì ìš©
             controller.Move(velocity * Time.deltaTime);
         }
     }
