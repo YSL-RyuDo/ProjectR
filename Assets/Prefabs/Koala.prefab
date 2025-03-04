@@ -137,8 +137,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4632149983897164}
   - component: {fileID: 95997472022483686}
-  - component: {fileID: 6771569134322238358}
-  - component: {fileID: 5642748310663966916}
+  - component: {fileID: 8193663744182496291}
   - component: {fileID: 731502418129753402}
   m_Layer: 0
   m_Name: Koala
@@ -186,8 +185,8 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!136 &6771569134322238358
-CapsuleCollider:
+--- !u!143 &8193663744182496291
+CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -204,38 +203,14 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.91424453
-  m_Height: 3.7781363
-  m_Direction: 1
-  m_Center: {x: 0, y: 1.9168391, z: -0.06365657}
---- !u!54 &5642748310663966916
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1071349104714722}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 80
-  m_CollisionDetection: 0
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &731502418129753402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,14 +224,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 10
-  jumpForce: 25
-  wallMoveSpeed: 10
-  wallDetachCheckDistance: 0.5
-  climbOverThreshold: 0.2
+  jumpHeight: 2
+  gravity: -9.81
+  rotationSpeed: 10
   isGrounded: 0
-  isWallAttached: 0
-  canAttachToWall: 0
-  tryAttachToWall: 0
 --- !u!1 &1073908781451174
 GameObject:
   m_ObjectHideFlags: 0

@@ -23,6 +23,8 @@ namespace Manager.InputManager
         //지상에서 벽 붙기
         public bool wallAttach { get; private set; }
 
+        //달리기
+        public bool sprint {  get; private set; }
 
 
         private void Awake()
@@ -39,6 +41,7 @@ namespace Manager.InputManager
             vertical = Input.GetAxisRaw("Vertical");
             jump = Input.GetKey(KeyCode.LeftAlt);
             wallAttach = Input.GetKey(KeyCode.C);
+            sprint = Input.GetKey(KeyCode.LeftShift);
         }
     }
 }
