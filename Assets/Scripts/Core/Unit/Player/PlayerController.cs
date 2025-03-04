@@ -13,14 +13,23 @@ namespace Core.Unit.Player
         public float moveSpeed = 5f;
         public float jumpHeight = 2f;
         public float gravity = -9.81f;
+        public float wallHangGravity = 0f;
+
+
 
         public float rotationSpeed = 10f;
 
         private Vector3 velocity;
+        private Vector3 wallNormal;
 
 
         [SerializeField]
         private bool isGrounded;
+        [SerializeField]
+        private bool isWallHanging = false;
+        [SerializeField]
+        private bool isTouchingWall;
+
 
         Animator animator;
 
@@ -38,10 +47,19 @@ namespace Core.Unit.Player
         // Update is called once per frame
         void Update()
         {
-            HandleMovement();
-            HandleJump();
             HandleGroundCheck();
-            ApplyGravity();
+            HandleWallCheck();
+
+            if (isWallHanging)
+            {
+                HandleWallHang();
+            }
+            else
+            {
+                HandleMovement();
+                HandleJump();
+                ApplyGravity();
+            }
         }
 
         void HandleMovement()
@@ -74,6 +92,50 @@ namespace Core.Unit.Player
             float rayLength = 0.3f;  // Ray 길이 조정
 
             isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, rayLength);
+
+            if(isGrounded)
+            {
+                isWallHanging = false;
+            }
+        }
+
+        void HandleWallCheck()
+        {
+            RaycastHit hit;
+
+            float wallRayLength = 1f;
+
+            if(Physics.Raycast(transform.position, transform.forward, out hit, wallRayLength))
+            {
+                if (hit.collider.CompareTag("Ground"))  // 벽이 Ground 태그면 매달리기 가능
+                {
+                    isTouchingWall = true;
+                    wallNormal = hit.normal; // 벽 방향 저장
+
+                    if (!isGrounded && velocity.y < 0) // 공중에서 벽에 부딪혔을 때
+                    {
+                        isWallHanging = true;
+                        velocity.y = 0; // 중력 제거
+                    }
+                }
+            }
+            else
+            {
+                isTouchingWall = false;
+            }
+        }
+
+        void HandleWallHang()
+        {
+            // 벽 매달릴 때는 중력 적용 안함
+            velocity.y = wallHangGravity;
+            controller.Move(Vector3.zero); // 움직이지 않도록 고정
+
+            // 플레이어가 방향키를 반대 방향으로 누르면 매달리기 해제
+            if (InputManager.instance.horizontal * wallNormal.x > 0)
+            {
+                isWallHanging = false;
+            }
         }
 
         //중력 적용, CharacterController는 rigidbody와 다르게 자동 중력 적용이 아님
