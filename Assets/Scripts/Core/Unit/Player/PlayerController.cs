@@ -11,27 +11,30 @@ namespace Core.Unit.Player
     public class PlayerController : MonoBehaviour
     {
         public float moveSpeed = 5f;
-        public float jumpHeight = 2f;
+        public float jumpHeight = 2f; //돌려보면서 엔진에서 변동
         public float gravity = -9.81f;
-        public float wallHangGravity = 0f;
 
+        public float wallHangGravity = 0f; //벽에 매달렸을 땐 중력 적용 안되게
+        public float wallClimbSpeed = 2f;   // 벽에서 위/아래 이동 속도
+        public float wallSideMoveSpeed = 2f; // 벽에서 좌우 이동 속도
 
 
         public float rotationSpeed = 10f;
 
-        private Vector3 velocity;
-        private Vector3 wallNormal;
+        private Vector3 velocity; //이동 속도
+
+        private Vector3 wallNormal; //벽 방향 저장
 
 
         [SerializeField]
-        private bool isGrounded;
+        private bool isGrounded; //지면 확인
         [SerializeField]
-        private bool isWallHanging = false;
+        private bool isWallHanging = false; //벽에 매달렸는지 확인
         [SerializeField]
-        private bool isTouchingWall;
+        private bool isTouchingWall; //벽에 닿았는지 확인
 
 
-        Animator animator;
+        private Animator animator;
 
         private CharacterController controller;
      
@@ -52,7 +55,7 @@ namespace Core.Unit.Player
 
             if (isWallHanging)
             {
-                HandleWallHang();
+                HandleWallHangMovement();
             }
             else
             {
@@ -74,7 +77,7 @@ namespace Core.Unit.Player
 
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
 
-                controller.Move(move * moveSpeed * Time.deltaTime);
+                controller.Move(move * speed * Time.deltaTime);
             }
         }
 
@@ -103,8 +106,9 @@ namespace Core.Unit.Player
         {
             RaycastHit hit;
 
-            float wallRayLength = 1f;
+            float wallRayLength = 0.9f;
 
+            //플레이어 앞에 지형인데 벽처럼 높으면 붙게 함
             if(Physics.Raycast(transform.position, transform.forward, out hit, wallRayLength))
             {
                 if (hit.collider.CompareTag("Ground"))  // 벽이 Ground 태그면 매달리기 가능
@@ -117,6 +121,13 @@ namespace Core.Unit.Player
                         isWallHanging = true;
                         velocity.y = 0; // 중력 제거
                     }
+
+
+                    if (isGrounded && InputManager.instance.wallAttach)
+                    {
+                        isWallHanging = true;
+                        velocity = Vector3.zero; // 중력 제거 및 움직임 정지
+                    }
                 }
             }
             else
@@ -125,18 +136,39 @@ namespace Core.Unit.Player
             }
         }
 
-        void HandleWallHang()
+        void HandleWallHangMovement()
         {
-            // 벽 매달릴 때는 중력 적용 안함
+            // 벽 매달릴 때 중력 제거
             velocity.y = wallHangGravity;
-            controller.Move(Vector3.zero); // 움직이지 않도록 고정
+            controller.Move(Vector3.zero); // 기본 이동 방지
 
-            // 플레이어가 방향키를 반대 방향으로 누르면 매달리기 해제
+            // 위/아래(점프 버튼 & 아래 이동 키) 이동
+            float verticalMove = InputManager.instance.vertical * wallClimbSpeed * Time.deltaTime;
+
+            // 좌우 이동 (벽에 매달려서 좌우로 이동 가능)
+            float horizontalMove = InputManager.instance.horizontal * wallSideMoveSpeed * Time.deltaTime;
+
+            // 플레이어가 벽을 기준으로 위/아래/좌우 이동 가능하도록 함
+            Vector3 wallMove = (Vector3.up * verticalMove) + (transform.right * horizontalMove);
+            controller.Move(wallMove);
+
+            // 벽에서 이동할 때 애니메이션 추가 가능 (ex: animator.SetFloat("WallMove", Mathf.Abs(verticalMove) + Mathf.Abs(horizontalMove)))
+
+            // 방향키 반대로 누르면 벽 매달리기 해제
             if (InputManager.instance.horizontal * wallNormal.x > 0)
             {
                 isWallHanging = false;
             }
+
+            // ? 이동 후 벽이 있는지 다시 검사 (없으면 떨어짐)
+            if (!isTouchingWall)
+            {
+                isWallHanging = false;
+                return;
+            }
+
         }
+
 
         //중력 적용, CharacterController는 rigidbody와 다르게 자동 중력 적용이 아님
         void ApplyGravity()

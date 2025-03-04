@@ -42,6 +42,7 @@ namespace Manager.InputManager
             jump = Input.GetKey(KeyCode.LeftAlt);
             wallAttach = Input.GetKey(KeyCode.C);
             sprint = Input.GetKey(KeyCode.LeftShift);
+
         }
     }
 }
