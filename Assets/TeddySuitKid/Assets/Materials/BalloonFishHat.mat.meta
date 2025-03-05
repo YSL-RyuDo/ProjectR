@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 31e29df5d3edd154e808525ce54fd547
+timeCreated: 1499679841
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Materials/BalloonFishHat.mat
+  uploadId: 189281

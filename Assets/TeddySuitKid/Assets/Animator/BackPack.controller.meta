@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: cae7ab3b35e73c34d89bc84c3188a4c4
+timeCreated: 1499703370
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Animator/BackPack.controller
+  uploadId: 189281

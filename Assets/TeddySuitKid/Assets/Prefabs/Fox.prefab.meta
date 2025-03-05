@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e0e1165640516fb4abe42fbb6339664f
+timeCreated: 1499704383
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Prefabs/Fox.prefab
+  uploadId: 189281

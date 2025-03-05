@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: ffdae399bfdaeb54a8e97a62128f170d
+timeCreated: 1499689789
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Materials/BadgerPaws.mat
+  uploadId: 189281

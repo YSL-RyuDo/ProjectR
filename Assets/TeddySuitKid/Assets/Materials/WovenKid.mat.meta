@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: d8df18881aba0e441bbec105c975ace5
+timeCreated: 1499766652
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Materials/WovenKid.mat
+  uploadId: 189281

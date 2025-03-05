@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e400bd1611928ab46b08ab4c6692345a
+timeCreated: 1499683145
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95262
+  packageName: Teddy Suit Kid
+  packageVersion: 1.0
+  assetPath: Assets/TeddySuitKid/Assets/Materials/PorkyHat.mat
+  uploadId: 189281

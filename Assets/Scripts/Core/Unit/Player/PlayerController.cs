@@ -1,185 +1,203 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 //
-//InputManage »ç¿ëÀ» À§ÇÑ ³×ÀÓ½ºÆäÀÌ½º
+//InputManage ì‚¬ìš©ì„ ìœ„í•œ ë„¤ì„ìŠ¤í˜ì´ìŠ¤
 using Manager.InputManager;
 
 namespace Core.Unit.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        private Rigidbody rigid;
-
         public float moveSpeed = 5f;
-        public float jumpForce = 15f; // °ÔÀÓ ÇÁ·ÎÁ§Æ® ¼¼ÆÃ¿¡¼­ Áß·Â -90À¸·Î ¼³Á¤ÇÔ, À¯´ÏÆ¼ ¿£Áø¿¡¼­ 25·Î ¼³Á¤
-        public float wallMoveSpeed = 3f;
-        public float wallDetachCheckDistance = 0.5f; // º® ³¡ °¨Áö °Å¸®
-        public float climbOverThreshold = 0.2f; // ²À´ë±â °¨Áö °Å¸® (ÀÛÀ»¼ö·Ï ¹Î°¨ÇÏ°Ô Ã³¸®)
+        public float jumpHeight = 2f; //ëŒë ¤ë³´ë©´ì„œ ì—”ì§„ì—ì„œ ë³€ë™
+        public float gravity = -9.81f;
 
-        [SerializeField]
-        private bool isGrounded;
-        [SerializeField]
-        private bool isWallAttached; //º®¿¡ ºÙ¾ú´ÂÁö
-        [SerializeField]
-        private bool canAttachToWall = false; //º®¿¡ ºÙÀ» ¼ö ÀÖ´ÂÁö È®ÀÎ
-        [SerializeField]
-        private bool tryAttachToWall = false;
+        public float wallHangGravity = 0f; //ë²½ì— ë§¤ë‹¬ë ¸ì„ ë• ì¤‘ë ¥ ì ìš© ì•ˆë˜ê²Œ
+        public float wallClimbSpeed = 2f;   // ë²½ì—ì„œ ìœ„/ì•„ë˜ ì´ë™ ì†ë„
+        public float wallSideMoveSpeed = 2f; // ë²½ì—ì„œ ì¢Œìš° ì´ë™ ì†ë„
 
 
-        private Vector3 wallNormal; //º®ÀÇ ¹æÇâ
+        public float rotationSpeed = 10f;
+
+        private Vector3 velocity; //ì´ë™ ì†ë„
+
+        private Vector3 wallNormal; //ë²½ ë°©í–¥ ì €ì¥
+
+
+        [SerializeField]
+        private bool isGrounded; //ì§€ë©´ í™•ì¸
+        [SerializeField]
+        private bool isJumped;
+        [SerializeField]
+        private bool isWallHanging = false; //ë²½ì— ë§¤ë‹¬ë ¸ëŠ”ì§€ í™•ì¸
+        [SerializeField]
+        private bool isTouchingWall; //ë²½ì— ë‹¿ì•˜ëŠ”ì§€ í™•ì¸
+
+      
+
+        private Animator animator;
+
+        private CharacterController controller;
+     
 
         // Start is called before the first frame update
         void Start()
         {
-            rigid = GetComponent<Rigidbody>();  
+            animator = GetComponent<Animator>();
+
+            controller = GetComponent<CharacterController>();
         }
 
         // Update is called once per frame
         void Update()
         {
-            HandleMovement();
+            HandleGroundCheck();
+            HandleWallCheck();
 
-
-            // º®°ú Ãæµ¹ÇÑ »óÅÂ¿¡¼­ C Å°¸¦ ´©¸£¸é º®¿¡ ºÙ±â
-            if (canAttachToWall && InputManager.instance.wallAttach)
-            {             
-                AttachToWall();
+            if (isWallHanging)
+            {
+                HandleWallHangMovement();
+            }
+            else
+            {
+                HandleMovement();
+                HandleJump();
+                ApplyGravity();
             }
         }
 
         void HandleMovement()
         {
-            float moveX = InputManager.instance.horizontal; // ÁÂ¿ì ÀÔ·Â
-            float moveZ = InputManager.instance.vertical;   // ¾ÕµÚ ÀÔ·Â (º®¿¡¼± À§¾Æ·¡·Î º¯È¯)
-            bool jump = InputManager.instance.jump;
+            //ë‹¬ë¦¬ê¸° ìƒíƒœë©´ ì´ë™ì†ë„ì˜ 150%, ì•„ë‹ˆë©´ ê¸°ë³¸ ì†ë„
+            float speed = InputManager.instance.sprint ? moveSpeed * 1.5f : moveSpeed;
+            Vector3 move = new Vector3(InputManager.instance.horizontal, 0, InputManager.instance.vertical).normalized;
 
-            // º®¿¡ ºÙ¾îÀÖ´Â °æ¿ì
-            if (isWallAttached)
+            if(move.magnitude >= 0.1f)
             {
-                rigid.useGravity = false; // Áß·Â Á¦°Å
+                Quaternion targetRotation = Quaternion.LookRotation(move);
 
-                //ÀÔ·Â º¯È¯
-                Vector3 moveDirection = new Vector3(moveX, moveZ, 0).normalized * wallMoveSpeed;
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
 
-                // º®ÀÇ ¹æÇâÀ» µû¶ó ÀÌµ¿ ¹æÇâ Á¶Á¤
-                moveDirection = Vector3.ProjectOnPlane(new Vector3(moveX, moveZ, 0), wallNormal);
+                controller.Move(move * speed * Time.deltaTime);
+            }
 
-                rigid.velocity = moveDirection;
+            if(!isWallHanging)
+            {
+                float moveSpeedValue = move.magnitude * speed;
+                animator.SetFloat("MoveSpeed", moveSpeedValue);
+            }
+            
+        }
 
-                // º®À» Å¸°í ¿Ã¶ó°¡´Ù°¡ ¹Ù´Ú¿¡ ´êÀ¸¸é ¿ø·¡ »óÅÂ·Î º¹±Í
-                if (isGrounded && !tryAttachToWall)
+        void HandleJump()
+        {
+            if(isGrounded && InputManager.instance.jump)
+            {
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                isJumped = true;
+                animator.SetTrigger("Jump");
+            }
+        }
+
+        void HandleGroundCheck()
+        {
+            RaycastHit hit;
+            float rayLength = 0.3f;  // Ray ê¸¸ì´ ì¡°ì •
+
+            isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, rayLength);
+
+            if(isGrounded)
+            {
+                isJumped = false;
+                isWallHanging = false;
+            }
+        }
+
+        void HandleWallCheck()
+        {
+            RaycastHit hit;
+            float wallRayLength = 0.75f; // ë²½ ê°ì§€ ê±°ë¦¬
+            Vector3 rayStart = transform.position; // Raycast ì‹œì‘ ìœ„ì¹˜
+
+            // ë²½ ê°ì§€ Rayë¥¼ ë””ë²„ê¹…ìš©ìœ¼ë¡œ ì‹œê°í™”
+            Debug.DrawRay(rayStart, transform.forward * wallRayLength, Color.red, 0.1f);
+
+
+            //í”Œë ˆì´ì–´ ì•ì— ì§€í˜•ì¸ë° ë²½ì²˜ëŸ¼ ë†’ìœ¼ë©´ ë¶™ê²Œ í•¨
+            if (Physics.Raycast(rayStart, transform.forward, out hit, wallRayLength))
+            {
+                
+                if (hit.collider.CompareTag("Ground"))  // ë²½ì´ Ground íƒœê·¸ë©´ ë§¤ë‹¬ë¦¬ê¸° ê°€ëŠ¥
                 {
-                    isWallAttached = false;
-                    rigid.useGravity = true;
-                }
+                    isTouchingWall = true;
+                    wallNormal = hit.normal; // ë²½ ë°©í–¥ ì €ì¥
 
-                // º®ÀÇ ³¡À» È®ÀÎÇÏ°í ¶³¾îÁö°Ô ¸¸µé±â
-                if (!CheckWallAhead())
-                {
-                    if (CheckWallTop()) // º® ²À´ë±âÀÎÁö È®ÀÎ
+                    if (!isGrounded && isJumped) // ê³µì¤‘ì—ì„œ ë²½ì— ë¶€ë”ªí˜”ì„ ë•Œ
                     {
-                        ClimbOverWall();
+                        isWallHanging = true;
+                        velocity.y = 0; // ì¤‘ë ¥ ì œê±°
+
+                        animator.SetBool("WallHanging", true);
                     }
-                    else
+
+
+                    if (isGrounded && InputManager.instance.wallAttach)
                     {
-                        DetachFromWall();
+                        isWallHanging = true;
+                        velocity = Vector3.zero; // ì¤‘ë ¥ ì œê±° ë° ì›€ì§ì„ ì •ì§€
+                        animator.SetBool("WallHanging", true);
+
                     }
                 }
+            }
+            else
+            {
+                isTouchingWall = false;
+                animator.SetBool("WallHanging", false);
+            }
+        }
 
+        void HandleWallHangMovement()
+        {
+            // ë²½ ë§¤ë‹¬ë¦´ ë•Œ ì¤‘ë ¥ ì œê±°
+            velocity.y = wallHangGravity;
+            controller.Move(Vector3.zero); // ê¸°ë³¸ ì´ë™ ë°©ì§€
+            isJumped = false;
 
-                return; // º®¿¡ ºÙ¾îÀÖÀ» ¶§´Â ±âÁ¸ ÀÌµ¿ ·ÎÁ÷ ½ÇÇà ¾È ÇÔ
+            // ìœ„/ì•„ë˜(ì í”„ ë²„íŠ¼ & ì•„ë˜ ì´ë™ í‚¤) ì´ë™
+            float verticalMove = InputManager.instance.vertical * wallClimbSpeed * Time.deltaTime;
+
+            // ì¢Œìš° ì´ë™ (ë²½ì— ë§¤ë‹¬ë ¤ì„œ ì¢Œìš°ë¡œ ì´ë™ ê°€ëŠ¥)
+            float horizontalMove = InputManager.instance.horizontal * wallSideMoveSpeed * Time.deltaTime;
+
+            // í”Œë ˆì´ì–´ê°€ ë²½ì„ ê¸°ì¤€ìœ¼ë¡œ ìœ„/ì•„ë˜/ì¢Œìš° ì´ë™ ê°€ëŠ¥í•˜ë„ë¡ í•¨
+            Vector3 wallMove = (Vector3.up * verticalMove) + (transform.right * horizontalMove);
+            controller.Move(wallMove);
+
+            if (InputManager.instance.jump)
+            {
+                isWallHanging = false;
+
+                animator.SetTrigger("WallJump");
             }
 
-            // ÀÏ¹İ ÀÌµ¿ ·ÎÁ÷
-            rigid.velocity = new Vector3(moveX * moveSpeed, rigid.velocity.y, moveZ * moveSpeed);
-
-            if (jump && isGrounded)
+            // ë²½ì´ ì—†ìœ¼ë©´ ë–¨ì–´ì§
+            if (!isTouchingWall)
             {
-                rigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                isGrounded = false;
+                animator.SetBool("WallHanging", false);
+                isWallHanging = false;
+                return;
             }
 
         }
-        
-        // Áö»ó º® ºÙ±â ÇÔ¼ö 
-        private void AttachToWall()
-        {
-            transform.position += Vector3.up * (climbOverThreshold * 3f);
-            tryAttachToWall = true;
-            isWallAttached = true;
-            rigid.velocity = Vector3.zero;
-            rigid.useGravity = false;
-        }
 
-        // º® È®ÀÎ ÇÔ¼ö
-        private bool CheckWallAhead()
+        //ì¤‘ë ¥ ì ìš©, CharacterControllerëŠ” rigidbodyì™€ ë‹¤ë¥´ê²Œ ìë™ ì¤‘ë ¥ ì ìš©ì´ ì•„ë‹˜
+        void ApplyGravity()
         {
-            return Physics.Raycast(transform.position, -wallNormal, wallDetachCheckDistance);
-        }
-
-        // º®¿¡¼­ ¶³¾îÁö´Â ÇÔ¼ö
-        private void DetachFromWall()
-        {
-            isWallAttached = false;
-            rigid.useGravity = true;
-        }
-
-        // º® ²À´ë±â È®ÀÎ ÇÔ¼ö
-        private bool CheckWallTop()
-        {
-            return !Physics.Raycast(transform.position + Vector3.up * climbOverThreshold, -wallNormal, wallDetachCheckDistance);
-        }
-
-        // º® ²À´ë±â ¿Ã¶ó°¡´Â ÇÔ¼ö
-        private void ClimbOverWall()
-        {
-            transform.position += Vector3.up * (climbOverThreshold * 3f) + wallNormal * -0.5f;
-            isWallAttached = false;
-            rigid.useGravity = true;
-            isGrounded = true;
-        }
-
-        private void OnCollisionEnter(Collision collision)
-        {
-            if(collision.gameObject.CompareTag("Ground"))
-            {
-                Vector3 normal = collision.contacts[0].normal;
-
-                // ¹Ù´ÚÀÎÁö È®ÀÎ (y °ªÀÌ ÃæºĞÈ÷ Å©¸é ¹Ù´Ú)
-                // wall ÅÂ±×¸¦ µû·Î ¾ÈÇÏ´Â ÀÌÀ¯´Â °ÔÀÓ ³»¿¡¼­ ¸ÊÀÌ ¼öÁ÷Àû ±¸Á¶¸é ÀÌ¸¦ ¿Ã¶ó°¥ ¶§ wall Äİ¶óÀÌ´õ¸¦ µû·Î ³Ö´Â°Åº¸´Ü ÀÌ°Ô ³´Áö ¾ÊÀ»±î ÇÏ´Â ´À³¦
-                if (normal.y > 0.5f)
-                {
-                    isGrounded = true;
-                    isWallAttached = false; // º®¿¡¼­ ³»·Á¿À¸é º® ºÙ±â »óÅÂ ÇØÁ¦
-                    rigid.useGravity = true; // Áß·Â ´Ù½Ã È°¼ºÈ­
-                }
-                else if (!isGrounded && Mathf.Abs(normal.y) < 0.3f)
-                {
-                    // Á¡ÇÁ Áß
-                    // ¹Ù´ÚÀÌ ¾Æ´Ñ °æ¿ì (º®ÀÌ¸é)
-                    isWallAttached = true;
-                    wallNormal = normal; // º® ¹æÇâ ÀúÀå
-                    rigid.velocity = Vector3.zero; // ¼Óµµ ÃÊ±âÈ­
-                    rigid.useGravity = false; // Áß·Â Á¦°Å (º®¿¡ ºÙÀ½)    
-                }
-                else if(Mathf.Abs(normal.y) < 0.3f)
-                {
-                    // ±×³É ÀÌµ¿ Áß
-                    // C Å°¸¦ ´­·¯¾ß º®¿¡ ºÙÀ» ¼ö ÀÖµµ·Ï ¼³Á¤
-                    canAttachToWall = true;
-                    wallNormal = normal;
-                }
-            }          
-        }
-
-        private void OnCollisionExit(Collision collision)
-        {
-            if (collision.gameObject.CompareTag("Ground"))
-            {
-                canAttachToWall = false; // º®°ú ¶³¾îÁö¸é º® ºÙ±â ºñÈ°¼ºÈ­
-            }
+            velocity.y += gravity * Time.deltaTime; // ì§€ì†ì ìœ¼ë¡œ ì¤‘ë ¥ ì ìš©
+            controller.Move(velocity * Time.deltaTime);
         }
     }
 }
