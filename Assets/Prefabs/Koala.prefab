@@ -204,13 +204,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 4
+  m_Radius: 1
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 2, z: 0}
 --- !u!114 &731502418129753402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,8 +226,14 @@ MonoBehaviour:
   moveSpeed: 10
   jumpHeight: 2
   gravity: -9.81
+  wallHangGravity: 0
+  wallClimbSpeed: 2
+  wallSideMoveSpeed: 2
   rotationSpeed: 10
   isGrounded: 0
+  isJumped: 0
+  isWallHanging: 0
+  isTouchingWall: 0
 --- !u!1 &1073908781451174
 GameObject:
   m_ObjectHideFlags: 0
