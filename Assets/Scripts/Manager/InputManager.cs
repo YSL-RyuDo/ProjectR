@@ -26,6 +26,8 @@ namespace Manager.InputManager
         //´Þ¸®±â
         public bool sprint {  get; private set; }
 
+        public bool interaction {  get; private set; }
+
 
         private void Awake()
         {
@@ -42,6 +44,8 @@ namespace Manager.InputManager
             jump = Input.GetKey(KeyCode.LeftAlt);
             wallAttach = Input.GetKey(KeyCode.C);
             sprint = Input.GetKey(KeyCode.LeftShift);
+
+            interaction = Input.GetKey(KeyCode.Space);
 
         }
     }
