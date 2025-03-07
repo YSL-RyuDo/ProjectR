@@ -43,14 +43,20 @@ namespace Core.Unit.Player
         void Update()
         {
             HandleGroundCheck();
-            HandleWallCheck();
+            
 
             if (isWallHanging)
             {
+                HandleWallCheck();
                 HandleWallHangMovement();
             }
             else
             {
+
+                if (isJumped || InputManager.instance.wallAttach)
+                {
+                    HandleWallCheck(); // 점프했거나 벽붙기 입력이 있을 때만 벽 체크
+                }
                 HandleMovement();
                 HandleJump();
                 ApplyGravity();
@@ -80,7 +86,7 @@ namespace Core.Unit.Player
 
         void HandleJump()
         {
-            if (isGrounded && InputManager.instance.jump)
+            if (isGrounded && InputManager.instance.jump && !isTouchingWall)
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
                 isJumped = true;
@@ -98,6 +104,10 @@ namespace Core.Unit.Player
                 isGrounded = true;
                 isJumped = false;
                 isWallHanging = false;
+                isTouchingWall = false;
+
+                animator.SetBool("WallHanging", false); // 벽 매달리기 해제
+                animator.SetFloat("MoveSpeed", 0f); // 기본 이동 애니메이션 설정
 
                 lastSafePosition = transform.position;  // 안전한 위치 갱신
             }
@@ -112,32 +122,36 @@ namespace Core.Unit.Player
             RaycastHit hit;
             float wallRayLength = 0.3f; // 감지 거리 조정
             float sphereRadius = 0.2f;  // 감지 반경 확장
+            float wallAttachThreshold = 0.2f; // 벽 근처 감지 거리 (이보다 가까우면 자동으로 붙지 않음)
 
-            Vector3 rayStart = transform.position;
+            Vector3 rayStart = transform.position + Vector3.up * 0.15f;
             Debug.DrawRay(rayStart, transform.forward * wallRayLength, Color.red, 0.1f);
 
             // SphereCast를 사용하여 감지 성능 향상
             if (Physics.SphereCast(rayStart, sphereRadius, transform.forward, out hit, wallRayLength))
             {
                 if (hit.collider.CompareTag("Ground")) // 벽이 Ground 태그를 가질 때만 적용
-                {
-                    isTouchingWall = true;
+                {  
                     wallNormal = hit.normal;
 
-                    if (!isGrounded && isJumped)
+                    float distanceToWall = Vector3.Distance(transform.position, hit.point); // 벽과의 거리 측정
+
+                    // 플레이어가 벽과 가까우면 벽붙기 입력이 필요
+                    if (!isGrounded && isJumped && distanceToWall > wallAttachThreshold)
                     {
+                        isTouchingWall = true;
                         isWallHanging = true;
                         velocity.y = 0;
                         animator.SetBool("WallHanging", true);
                     }
-
-                    if (isGrounded && InputManager.instance.wallAttach)
+                    else if (isGrounded && InputManager.instance.wallAttach)
                     {
+                        isTouchingWall = true;
+                        // 벽 근처에서는 wallAttach 입력이 있어야만 벽에 붙을 수 있음
                         isWallHanging = true;
                         velocity = Vector3.zero;
                         animator.SetBool("WallHanging", true);
-
-                        controller.Move(Vector3.up * 0.2f); //플레이어를 살짝 올려줌
+                        controller.Move(Vector3.up * 0.2f); // 플레이어를 살짝 올려줌
                     }
 
                     lastSafePosition = transform.position;  // 벽에서 매달려도 안전한 위치 갱신
@@ -169,19 +183,19 @@ namespace Core.Unit.Player
                 animator.SetBool("WallHanging", false);
             }
 
-            // 플레이어가 벽 꼭대기에 도착하면 벽 매달리기 해제
-            if (velocity.y > 0 && !Physics.Raycast(transform.position, Vector3.up, 0.5f))
-            {
-                isWallHanging = false;
-                isTouchingWall = false;
-                animator.SetBool("WallHanging", false);
-            }
-
-            if (InputManager.instance.jump)
+            if (isWallHanging && InputManager.instance.jump)
             {
                 isWallHanging = false;
                 isTouchingWall = false;
                 animator.SetTrigger("WallJump");
+                animator.SetBool("WallHanging", false);
+
+                // 플레이어가 보고 있는 방향의 반대 방향으로 점프
+                Vector3 jumpDirection = -transform.forward; // 현재 바라보는 방향의 반대 방향
+                controller.Move(jumpDirection * 0.5f); // 살짝 밀어내는 효과 추가
+
+                // 기존 점프력 유지
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             }
         }
 
@@ -192,7 +206,6 @@ namespace Core.Unit.Player
             controller.Move(velocity * Time.deltaTime);
         }
 
-        // 플레이어가 떨어지면 마지막 안전한 위치로 복귀
         void CheckFall()
         {
             if (transform.position.y < fallThreshold)
