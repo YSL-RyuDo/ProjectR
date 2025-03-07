@@ -28,6 +28,7 @@ namespace Core.Unit.Player
             }
         }
 
+        // 가장 가까운 상호작용 오브젝트를 구별하여 상호작용하도록 함
         void DetectClosestInteractable()
         {
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, interactionRange, interactableLayer);
@@ -73,7 +74,7 @@ namespace Core.Unit.Player
                 }
                 else
                 {
-                    Debug.Log($"'{currentInteractable.name}'와 상호작용 가능하지만, IInteractable이 없음!");
+                    Debug.Log("Interactable이 없음");
                 }
             }
         }
