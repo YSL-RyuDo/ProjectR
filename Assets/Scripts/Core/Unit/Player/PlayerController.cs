@@ -11,11 +11,19 @@ namespace Core.Unit.Player
         public float moveSpeed = 5f;
         public float jumpHeight = 2f;
         public float gravity = -9.81f;
+
         public float wallHangGravity = 0f;
         public float wallClimbSpeed = 2f;
         public float wallSideMoveSpeed = 2f;
+
         public float rotationSpeed = 10f;
+
         public float fallThreshold = -15f;  // 낙하 감지 높이
+
+        private float sprintTimer = 0f;
+        private float sprintCooldownTimer = 0f;
+        private float sprintDuration = 3f;
+        private float sprintCooldown = 5f;
 
         private Vector3 velocity;
         private Vector3 wallNormal;
@@ -29,6 +37,9 @@ namespace Core.Unit.Player
         private bool isWallHanging = false;
         [SerializeField]
         private bool isTouchingWall;
+        
+        private bool isSprinting = false;
+        private bool canSprint = true;
 
         private Animator animator;
         private CharacterController controller;
@@ -57,6 +68,8 @@ namespace Core.Unit.Player
                 {
                     HandleWallCheck(); // 점프했거나 벽붙기 입력이 있을 때만 벽 체크
                 }
+
+                HandleSprint();
                 HandleMovement();
                 HandleJump();
                 ApplyGravity();
@@ -65,9 +78,41 @@ namespace Core.Unit.Player
             CheckFall();  // 낙하 체크 추가
         }
 
+        void HandleSprint()
+        {
+            if(InputManager.instance.sprint && canSprint)
+            {
+                isSprinting = true;
+                canSprint = false;
+
+                sprintTimer = sprintDuration;
+            }
+
+            if(isSprinting)
+            {
+                sprintTimer -= Time.deltaTime;
+                if(sprintTimer <= 0f)
+                {
+                    isSprinting = false;
+
+                    sprintCooldownTimer = sprintCooldown;
+                }
+            }
+
+            if(!canSprint)
+            {
+                sprintCooldownTimer -= Time.deltaTime;
+                if(sprintCooldownTimer <= 0f)
+                {
+                    canSprint = true;
+                }
+            }
+        }
+
+
         void HandleMovement()
         {
-            float speed = InputManager.instance.sprint ? moveSpeed * 1.5f : moveSpeed;
+            float speed = isSprinting ? moveSpeed * 1.5f : moveSpeed;
             Vector3 move = new Vector3(InputManager.instance.horizontal, 0, InputManager.instance.vertical).normalized;
 
             if (move.magnitude >= 0.1f)
@@ -124,7 +169,7 @@ namespace Core.Unit.Player
             float sphereRadius = 0.2f;  // 감지 반경 확장
             float wallAttachThreshold = 0.2f; // 벽 근처 감지 거리 (이보다 가까우면 자동으로 붙지 않음)
 
-            Vector3 rayStart = transform.position + Vector3.up * 0.15f;
+            Vector3 rayStart = transform.position + Vector3.up * 0.25f;
             Debug.DrawRay(rayStart, transform.forward * wallRayLength, Color.red, 0.1f);
 
             // SphereCast를 사용하여 감지 성능 향상

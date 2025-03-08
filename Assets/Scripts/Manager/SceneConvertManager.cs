@@ -24,6 +24,7 @@ namespace Manager.SceneConvertManager
         }
 
         // 씬 전환 (즉시 변환)
+        // 로딩 씬이 필요하면 코드 수정 예정
         public void LoadScene(string sceneName)
         {
             SceneManager.LoadScene(sceneName);
