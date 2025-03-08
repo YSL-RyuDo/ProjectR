@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Core.Camera
 {
-    public class Camera : MonoBehaviour
+    public class PlayerCamera : MonoBehaviour
     {
         public Transform player;   // 플레이어 참조
         public Vector3 offset = new Vector3(0, 3, -10); // 카메라와 플레이어 간의 거리

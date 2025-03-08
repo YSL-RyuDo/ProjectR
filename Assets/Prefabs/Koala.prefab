@@ -139,6 +139,7 @@ GameObject:
   - component: {fileID: 95997472022483686}
   - component: {fileID: 8193663744182496291}
   - component: {fileID: 731502418129753402}
+  - component: {fileID: 3410739512157734709}
   m_Layer: 0
   m_Name: Koala
   m_TagString: Untagged
@@ -230,10 +231,27 @@ MonoBehaviour:
   wallClimbSpeed: 2
   wallSideMoveSpeed: 2
   rotationSpeed: 10
+  fallThreshold: -15
   isGrounded: 0
   isJumped: 0
   isWallHanging: 0
   isTouchingWall: 0
+--- !u!114 &3410739512157734709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071349104714722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb2e669afd39d284f9383359cf0a463c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRange: 1
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1073908781451174
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
+using Manager.SceneConvertManager;
 
 namespace Core.Interactable.Portal
 {
@@ -12,7 +13,8 @@ namespace Core.Interactable.Portal
         public void Interact()
         {
             Debug.Log("Æ÷Å»");
-            SceneManager.LoadScene(targetSceneName);
+            
+            SceneConvertManager.instance.LoadScene(targetSceneName);
         }
     }
 }
