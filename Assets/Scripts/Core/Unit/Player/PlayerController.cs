@@ -41,6 +41,8 @@ namespace Core.Unit.Player
         private bool isSprinting = false;
         private bool canSprint = true;
 
+        private bool isJumpingUp = false;
+
         private Animator animator;
         private CharacterController controller;
 
@@ -137,6 +139,11 @@ namespace Core.Unit.Player
                 isJumped = true;
                 animator.SetTrigger("Jump");
             }
+
+            if(velocity.y > 0)
+            {
+                isJumpingUp = true;
+            }
         }
 
         void HandleGroundCheck()
@@ -165,34 +172,36 @@ namespace Core.Unit.Player
         void HandleWallCheck()
         {
             RaycastHit hit;
-            float wallRayLength = 0.3f; // 감지 거리 조정
+            float wallRayLength = 0.2f; // 감지 거리 조정
             float sphereRadius = 0.2f;  // 감지 반경 확장
             float wallAttachThreshold = 0.2f; // 벽 근처 감지 거리 (이보다 가까우면 자동으로 붙지 않음)
 
             Vector3 rayStart = transform.position + Vector3.up * 0.25f;
             Debug.DrawRay(rayStart, transform.forward * wallRayLength, Color.red, 0.1f);
 
-            // SphereCast를 사용하여 감지 성능 향상
             if (Physics.SphereCast(rayStart, sphereRadius, transform.forward, out hit, wallRayLength))
             {
                 if (hit.collider.CompareTag("Ground")) // 벽이 Ground 태그를 가질 때만 적용
-                {  
+                {
                     wallNormal = hit.normal;
-
                     float distanceToWall = Vector3.Distance(transform.position, hit.point); // 벽과의 거리 측정
 
-                    // 플레이어가 벽과 가까우면 벽붙기 입력이 필요
-                    if (!isGrounded && isJumped && distanceToWall > wallAttachThreshold)
+                    // 방향키 입력이 있을 때만 벽에 붙기
+                    bool isMoving = InputManager.instance.horizontal != 0 || InputManager.instance.vertical != 0;
+
+                    // 벽에 붙을 수 있는 조건:
+                    // 1. 점프 상승 중이 아닐 것 (velocity.y <= 0)
+                    // 2. 점프가 끝났을 것 (!isJumped)
+                    if (!isGrounded && !isJumpingUp && isMoving && distanceToWall > wallAttachThreshold)
                     {
                         isTouchingWall = true;
                         isWallHanging = true;
                         velocity.y = 0;
                         animator.SetBool("WallHanging", true);
                     }
-                    else if (isGrounded && InputManager.instance.wallAttach)
+                    else if (isGrounded && InputManager.instance.wallAttach && isMoving)
                     {
                         isTouchingWall = true;
-                        // 벽 근처에서는 wallAttach 입력이 있어야만 벽에 붙을 수 있음
                         isWallHanging = true;
                         velocity = Vector3.zero;
                         animator.SetBool("WallHanging", true);
@@ -204,7 +213,6 @@ namespace Core.Unit.Player
                 }
             }
 
-            // 벽 감지가 실패하면 isTouchingWall을 false로 설정
             isTouchingWall = false;
             animator.SetBool("WallHanging", false);
         }
@@ -228,19 +236,12 @@ namespace Core.Unit.Player
                 animator.SetBool("WallHanging", false);
             }
 
-            if (isWallHanging && InputManager.instance.jump)
+            if (isWallHanging && InputManager.instance.wallJump)
             {
                 isWallHanging = false;
                 isTouchingWall = false;
                 animator.SetTrigger("WallJump");
                 animator.SetBool("WallHanging", false);
-
-                // 플레이어가 보고 있는 방향의 반대 방향으로 점프
-                Vector3 jumpDirection = -transform.forward; // 현재 바라보는 방향의 반대 방향
-                controller.Move(jumpDirection * 0.5f); // 살짝 밀어내는 효과 추가
-
-                // 기존 점프력 유지
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             }
         }
 
@@ -249,6 +250,11 @@ namespace Core.Unit.Player
         {
             velocity.y += gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
+
+            if (velocity.y <= 0)
+            {
+                isJumpingUp = false; // 하강 시작
+            }
         }
 
         void CheckFall()

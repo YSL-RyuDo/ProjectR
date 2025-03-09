@@ -20,6 +20,8 @@ namespace Manager.InputManager
         //점프
         public bool jump {  get; private set; }
 
+        public bool wallJump { get; private set; }
+
         //지상에서 벽 붙기
         public bool wallAttach { get; private set; }
 
@@ -32,8 +34,15 @@ namespace Manager.InputManager
         private void Awake()
         {
             //인스턴스로 처음 실행될 때 자기 자신만 존재하도록 함
-            if (instance == null) instance = this;
-            else Destroy(gameObject);
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         // Update is called once per frame
@@ -42,6 +51,7 @@ namespace Manager.InputManager
             horizontal = Input.GetAxisRaw("Horizontal");
             vertical = Input.GetAxisRaw("Vertical");
             jump = Input.GetKey(KeyCode.LeftAlt);
+            wallJump = Input.GetKeyDown(KeyCode.LeftAlt);
             wallAttach = Input.GetKey(KeyCode.C);
             sprint = Input.GetKey(KeyCode.LeftShift);
 
