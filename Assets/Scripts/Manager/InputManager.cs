@@ -55,7 +55,7 @@ namespace Manager.InputManager
             wallAttach = Input.GetKey(KeyCode.C);
             sprint = Input.GetKey(KeyCode.LeftShift);
 
-            interaction = Input.GetKey(KeyCode.Space);
+            interaction = Input.GetKeyDown(KeyCode.Space);
 
         }
     }

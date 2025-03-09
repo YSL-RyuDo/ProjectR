@@ -8,6 +8,9 @@ namespace Core.Unit.Player
 {
     public class PlayerController : MonoBehaviour
     {
+        public static PlayerController instance { get; private set; }
+
+
         public float moveSpeed = 5f;
         public float jumpHeight = 2f;
         public float gravity = -9.81f;
@@ -45,6 +48,21 @@ namespace Core.Unit.Player
 
         private Animator animator;
         private CharacterController controller;
+
+        private void Awake()
+        {
+            if(instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+
+                return;
+            }
+        }
 
         void Start()
         {

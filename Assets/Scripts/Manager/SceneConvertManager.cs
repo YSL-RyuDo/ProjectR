@@ -10,6 +10,9 @@ namespace Manager.SceneConvertManager
     {
         public static SceneConvertManager instance { get; private set; }
 
+        [SerializeField]
+        private string nextSpawnPortalID; // 다음 씬에서 플레이어가 스폰될 포탈 ID
+
         private void Awake()
         {
             if(instance == null)
@@ -28,6 +31,16 @@ namespace Manager.SceneConvertManager
         public void LoadScene(string sceneName)
         {
             SceneManager.LoadScene(sceneName);
+        }
+
+        public void SetNextSpawnPortal(string portalID)
+        {
+            nextSpawnPortalID = portalID;
+        }
+
+        public string GetNextSpawnPortal()
+        {
+            return nextSpawnPortalID;
         }
     }
 
