@@ -73,29 +73,21 @@ namespace Core.Unit.Player
 
         void Update()
         {
+            if (isJumped || InputManager.instance.wallAttach)
+            {
+                HandleWallCheck(); // 점프했거나 벽붙기 입력이 있을 때만 벽 체크
+            }
+
+            HandleSprint();
+            HandleMovement();
+            HandleJump();
+            ApplyGravity();
+        }
+
+        private void FixedUpdate()
+        {
             HandleGroundCheck();
-            
-
-            if (isWallHanging)
-            {
-                HandleWallCheck();
-                HandleWallHangMovement();
-            }
-            else
-            {
-
-                if (isJumped || InputManager.instance.wallAttach)
-                {
-                    HandleWallCheck(); // 점프했거나 벽붙기 입력이 있을 때만 벽 체크
-                }
-
-                HandleSprint();
-                HandleMovement();
-                HandleJump();
-                ApplyGravity();
-            }
-
-            CheckFall();  // 낙하 체크 추가
+            CheckFall(); 
         }
 
         void HandleSprint()
@@ -132,6 +124,15 @@ namespace Core.Unit.Player
 
         void HandleMovement()
         {
+            //벽에 매달려있으면 매달렸을 때 이동로직 불러옴
+            if (isWallHanging)
+            {
+                HandleWallCheck();
+                HandleWallHangMovement();
+
+                return;
+            }
+
             float speed = isSprinting ? moveSpeed * 1.5f : moveSpeed;
             Vector3 move = new Vector3(InputManager.instance.horizontal, 0, InputManager.instance.vertical).normalized;
 
@@ -155,6 +156,7 @@ namespace Core.Unit.Player
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
                 isJumped = true;
+                HandleWallCheck();
                 animator.SetTrigger("Jump");
             }
 

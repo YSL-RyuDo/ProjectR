@@ -15059,11 +15059,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2669693437543342985, guid: 01b1ca9e55c9b3540aadda963520af0e, type: 3}
       propertyPath: targetPortalID
-      value: CJU
+      value: Tutorial1
       objectReference: {fileID: 0}
     - target: {fileID: 2669693437543342985, guid: 01b1ca9e55c9b3540aadda963520af0e, type: 3}
       propertyPath: targetSceneName
-      value: CJU
+      value: Tutorial1
       objectReference: {fileID: 0}
     - target: {fileID: 6580290490296444622, guid: 01b1ca9e55c9b3540aadda963520af0e, type: 3}
       propertyPath: m_LocalPosition.x
