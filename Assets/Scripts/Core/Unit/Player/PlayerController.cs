@@ -190,19 +190,16 @@ namespace Core.Unit.Player
         void HandleWallCheck()
         {
             RaycastHit hit;
-            float wallRayLength = 0.2f; // 감지 거리 조정
-            float sphereRadius = 0.2f;  // 감지 반경 확장
-            float wallAttachThreshold = 0.2f; // 벽 근처 감지 거리 (이보다 가까우면 자동으로 붙지 않음)
+            float wallRayLength = 0.4f; // 감지 거리 조정
 
-            Vector3 rayStart = transform.position + Vector3.up * 0.25f;
+            Vector3 rayStart = transform.position;
             Debug.DrawRay(rayStart, transform.forward * wallRayLength, Color.red, 0.1f);
 
-            if (Physics.SphereCast(rayStart, sphereRadius, transform.forward, out hit, wallRayLength))
+            if (Physics.Raycast(rayStart, transform.forward, out hit, wallRayLength))
             {
                 if (hit.collider.CompareTag("Ground")) // 벽이 Ground 태그를 가질 때만 적용
                 {
-                    wallNormal = hit.normal;
-                    float distanceToWall = Vector3.Distance(transform.position, hit.point); // 벽과의 거리 측정
+                    wallNormal = hit.normal;                  
 
                     // 방향키 입력이 있을 때만 벽에 붙기
                     bool isMoving = InputManager.instance.horizontal != 0 || InputManager.instance.vertical != 0;
@@ -210,7 +207,7 @@ namespace Core.Unit.Player
                     // 벽에 붙을 수 있는 조건:
                     // 1. 점프 상승 중이 아닐 것 (velocity.y <= 0)
                     // 2. 점프가 끝났을 것 (!isJumped)
-                    if (!isGrounded && !isJumpingUp && isMoving && distanceToWall > wallAttachThreshold)
+                    if (!isGrounded && !isJumpingUp && isMoving)
                     {
                         isTouchingWall = true;
                         isWallHanging = true;
