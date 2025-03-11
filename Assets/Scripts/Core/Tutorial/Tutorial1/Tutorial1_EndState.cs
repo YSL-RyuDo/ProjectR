@@ -9,12 +9,13 @@ namespace Core.Tutorial
     {
         public void EnterState(TutorialManager tutorial)
         {
-            tutorial.ShowDialogue("a");
+            tutorial.ShowDialogue("Press Space And Go Tutorial2");
+            tutorial.CompleteTutorial(1); // 튜토리얼1 완료 처리
         }
 
         public void UpdateState(TutorialManager tutorial)
         {
-
+            // 튜토리얼 종료 로직
         }
     }
 }
