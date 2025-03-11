@@ -14,7 +14,7 @@ namespace Core.Tutorial
         private Queue<GameObject> platformPool = new Queue<GameObject>(); // 오브젝트 풀
         public GameObject platformPrefab; // 발판 프리팹
 
-        private const string Tutorial1Key = "Tutorial1Completed"; // 튜토리얼1 완료 여부 저장 키
+        private bool tutorial1Completed = false; // 실행 중에만 저장되는 튜토리얼 완료 여부
 
         public static TutorialManager instance { get; private set; }
 
@@ -33,7 +33,7 @@ namespace Core.Tutorial
 
         void Start()
         {
-            if (!IsTutorialCompleted(1)) // 튜토리얼1을 완료하지 않았다면 실행
+            if (!tutorial1Completed) // 실행 중에만 체크하는 방식
             {
                 StartTutorial(new Tutorial1_StartState());
             }
@@ -100,20 +100,13 @@ namespace Core.Tutorial
             platformPool.Enqueue(platform);
         }
 
-        // 튜토리얼 완료 상태 저장
+        // **게임이 실행되는 동안만 튜토리얼1 완료 여부 저장**
         public void CompleteTutorial(int tutorialNumber)
         {
-            PlayerPrefs.SetInt($"Tutorial{tutorialNumber}Completed", 1);
-            PlayerPrefs.Save();
-        }
-
-        // 튜토리얼 완료 여부 확인
-        public bool IsTutorialCompleted(int tutorialNumber)
-        {
-            return PlayerPrefs.GetInt($"Tutorial{tutorialNumber}Completed", 0) == 1;
+            if (tutorialNumber == 1)
+            {
+                tutorial1Completed = true;
+            }
         }
     }
 }
-
-
-
