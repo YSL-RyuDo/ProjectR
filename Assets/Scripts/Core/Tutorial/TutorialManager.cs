@@ -11,10 +11,14 @@ namespace Core.Tutorial
         private bool isNPCInteracted = false;
         public TextMeshProUGUI dialogueText;
         public GameObject dialoguePanel;
-        private Queue<GameObject> platformPool = new Queue<GameObject>(); // 오브젝트 풀
-        public GameObject platformPrefab; // 발판 프리팹
 
-        private bool tutorial1Completed = false; // 실행 중에만 저장되는 튜토리얼 완료 여부
+        public GameObject[] portals;
+
+        private Queue<GameObject> platformPool = new Queue<GameObject>(); 
+
+        public GameObject platformPrefab; 
+
+        private bool tutorial1Completed = false; 
 
         public static TutorialManager instance { get; private set; }
 
@@ -23,17 +27,17 @@ namespace Core.Tutorial
             if (instance == null)
             {
                 instance = this;
-                DontDestroyOnLoad(gameObject); // 씬이 넘어가도 유지
+                DontDestroyOnLoad(gameObject); 
             }
             else
             {
-                Destroy(gameObject); // 중복 방지
+                Destroy(gameObject); 
             }
         }
 
         void Start()
         {
-            if (!tutorial1Completed) // 실행 중에만 체크하는 방식
+            if (!tutorial1Completed) 
             {
                 StartTutorial(new Tutorial1_StartState());
             }
@@ -44,39 +48,45 @@ namespace Core.Tutorial
             currentState?.UpdateState(this);
         }
 
+        // 튜토리얼 시작
         public void StartTutorial(TutorialState tutorialState)
         {
             SetState(tutorialState);
         }
 
+        // 상태 변환
         public void SetState(TutorialState newState)
         {
             currentState = newState;
             currentState.EnterState(this);
         }
 
+        // 대화창 
         public void ShowDialogue(string text)
         {
             dialoguePanel.SetActive(true);
             dialogueText.text = text;
         }
 
+        // NPC 상호작용 여부 
         public void NPCInteracted()
         {
             isNPCInteracted = true;
         }
 
+        // NPC 상호작용 여부 확인
         public bool HasNPCInteracted()
         {
             return isNPCInteracted;
         }
 
+        // NPC 상호작용 여부 초기화
         public void ResetNPCInteraction()
         {
             isNPCInteracted = false;
         }
 
-        // 오브젝트 풀에서 발판 가져오기 (없으면 새로 생성)
+        // 오브젝트 풀에서 발판 가져오기 
         public GameObject GetPlatform(Vector3 position)
         {
             GameObject platform;
@@ -100,7 +110,7 @@ namespace Core.Tutorial
             platformPool.Enqueue(platform);
         }
 
-        // **게임이 실행되는 동안만 튜토리얼1 완료 여부 저장**
+        // 튜토리얼 완료 처리
         public void CompleteTutorial(int tutorialNumber)
         {
             if (tutorialNumber == 1)

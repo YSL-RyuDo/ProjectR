@@ -15,7 +15,7 @@ namespace Core.Tutorial
 
         public void UpdateState(TutorialManager tutorial)
         {
-            // 튜토리얼 종료 로직
+            
         }
     }
 }

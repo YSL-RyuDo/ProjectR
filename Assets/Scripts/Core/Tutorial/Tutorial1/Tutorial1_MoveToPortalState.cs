@@ -15,7 +15,7 @@ namespace Core.Tutorial
         {
             Debug.Log("Æ÷Å»·Î ÀÌµ¿");
             player = GameObject.FindWithTag("Player");
-            portal = GameObject.FindWithTag("Portal");
+            portal = tutorial.portals[0];
         }
 
         public void UpdateState(TutorialManager tutorial)

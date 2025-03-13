@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Core.Tutorial
 {
+    // 튜토리얼의 진행 단계
     public enum TutorialStep
     {
         MoveRight,
@@ -15,6 +16,7 @@ namespace Core.Tutorial
 
     public class Tutorial1_TalkWithNPCState : TutorialState
     {
+        // 현재 튜토리얼의 진행 단계에 따라 대사 출력 변경
         private static readonly Dictionary<TutorialStep, string> dialogues = new()
         {
             { TutorialStep.MoveRight, "Right" },

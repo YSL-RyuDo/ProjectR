@@ -10,9 +10,9 @@ namespace Core.Camera
     {
         public static PlayerCamera instance { get; private set; }
 
-        public Transform player;   // 플레이어 참조
-        public Vector3 offset = new Vector3(0, 5, -6); // 카메라와 플레이어 간의 거리
-        public float smoothSpeed = 5f; // 부드러운 이동 속도
+        public Transform player;  
+        public Vector3 offset = new Vector3(0, 5, -6); 
+        public float smoothSpeed = 5f; 
 
 
         private bool isPlayerMissing = false;
@@ -41,13 +41,10 @@ namespace Core.Camera
 
         void LateUpdate()
         {
-            if (player == null)
-                return;
-
-            // 목표 위치 계산 (플레이어 위치 + 오프셋)
+            if (player == null) return;
+ 
             Vector3 targetPosition = player.position + offset;
 
-            // 부드럽게 따라가기
             transform.position = Vector3.Lerp(transform.position, targetPosition, smoothSpeed * Time.deltaTime);
         }
 
@@ -62,11 +59,11 @@ namespace Core.Camera
 
         private void FindPlayer()
         {
-            GameObject playerObj = GameObject.FindWithTag("Player"); // "Player" 태그 사용
+            GameObject playerObj = GameObject.FindWithTag("Player"); 
             if (playerObj != null)
             {
                 player = playerObj.transform;
-                isPlayerMissing = false; // 플레이어 찾으면 탐색 중지
+                isPlayerMissing = false;
             }
         }
     }

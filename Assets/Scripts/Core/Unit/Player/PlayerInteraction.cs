@@ -15,7 +15,7 @@ namespace Core.Unit.Player
 
         private GameObject currentInteractable = null;
 
-        void FixedUpdate() // 최적화를 위해 FixedUpdate 사용
+        void FixedUpdate()
         {
             DetectClosestInteractable();
         }
@@ -28,7 +28,7 @@ namespace Core.Unit.Player
             }
         }
 
-        // 가장 가까운 상호작용 오브젝트를 구별하여 상호작용하도록 함
+        // 가장 가까운 상호작용 오브젝트를 구별하여 상호작용
         void DetectClosestInteractable()
         {
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, interactionRange, interactableLayer);
@@ -79,7 +79,7 @@ namespace Core.Unit.Player
             }
         }
 
-        // 감지 범위 시각화 (에디터에서 확인 가능)
+        // 감지 범위 시각화 
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.yellow;
