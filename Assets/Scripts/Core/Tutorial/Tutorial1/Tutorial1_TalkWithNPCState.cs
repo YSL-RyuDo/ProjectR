@@ -2,6 +2,7 @@ using Core.Tutorial;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Core.UI.Dialogue;
 
 namespace Core.Tutorial
 {
@@ -16,13 +17,15 @@ namespace Core.Tutorial
 
     public class Tutorial1_TalkWithNPCState : TutorialState
     {
+        string GMName = "YoungHui";
+
         // 현재 튜토리얼의 진행 단계에 따라 대사 출력 변경
         private static readonly Dictionary<TutorialStep, string> dialogues = new()
         {
             { TutorialStep.MoveRight, "Right" },
             { TutorialStep.MoveLeft, "Left" },
             { TutorialStep.MoveToPortal, "Portal" },
-            { TutorialStep.EndTutorial, "Tutorial2" }
+            { TutorialStep.EndTutorial, "Tutorial2, Press Space" }
         };
 
         private readonly TutorialStep step;
@@ -35,7 +38,7 @@ namespace Core.Tutorial
         public void EnterState(TutorialManager tutorial)
         {
             Debug.Log("GM과 대화");
-            tutorial.ShowDialogue(dialogues[step]);
+            DialogueManager.instance.ShowDialogue(dialogues[step], GMName);
         }
 
         public void UpdateState(TutorialManager tutorial)

@@ -40,7 +40,6 @@ namespace Manager.InputManager
 
         private void Awake()
         {
-            // 인스턴스로 처음 실행될 때 자기 자신만 존재하도록 함
             if (instance == null)
             {
                 instance = this;

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+
+
 namespace Core.Tutorial
 {
     public class TutorialManager : MonoBehaviour
     {
         private TutorialState currentState;
         private bool isNPCInteracted = false;
-        public TextMeshProUGUI dialogueText;
-        public GameObject dialoguePanel;
 
         public GameObject[] portals;
 
@@ -61,12 +61,6 @@ namespace Core.Tutorial
             currentState.EnterState(this);
         }
 
-        // 대화창 
-        public void ShowDialogue(string text)
-        {
-            dialoguePanel.SetActive(true);
-            dialogueText.text = text;
-        }
 
         // NPC 상호작용 여부 
         public void NPCInteracted()

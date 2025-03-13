@@ -121,9 +121,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3888702221571579773}
-        m_TargetAssemblyTypeName: Core.UI.Button.ButtonManager, Assembly-CSharp
-        m_MethodName: NextButton
+      - m_Target: {fileID: 7130577726847598207}
+        m_TargetAssemblyTypeName: Core.UI.Dialogue.DialogueManager, Assembly-CSharp
+        m_MethodName: NextButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -167,8 +167,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -252, y: -25}
-  m_SizeDelta: {x: -600, y: 35}
+  m_AnchoredPosition: {x: -220.29039, y: -25}
+  m_SizeDelta: {x: -536.5808, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4077313615007404858
 CanvasRenderer:
@@ -539,9 +539,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3888702221571579773}
-        m_TargetAssemblyTypeName: Core.UI.Button.ButtonManager, Assembly-CSharp
-        m_MethodName: ESCButtonOnClick
+      - m_Target: {fileID: 7130577726847598207}
+        m_TargetAssemblyTypeName: Core.UI.Dialogue.DialogueManager, Assembly-CSharp
+        m_MethodName: ESCButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -839,6 +839,7 @@ GameObject:
   - component: {fileID: 7968952313824443801}
   - component: {fileID: 7901407402923276077}
   - component: {fileID: 3888702221571579773}
+  - component: {fileID: 7130577726847598207}
   m_Layer: 5
   m_Name: DialoguePanel
   m_TagString: Untagged
@@ -919,6 +920,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Panel: {fileID: 6092188865101430716}
+--- !u!114 &7130577726847598207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6092188865101430716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e4fdcb7ffa29fb46966445128dfd564, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialoguePanel: {fileID: 6092188865101430716}
+  characterImage: {fileID: 3353654001703704940}
+  dialogueText: {fileID: 2628634328633104909}
+  nameText: {fileID: 7249546053238427919}
 --- !u!1 &8680757631460767626
 GameObject:
   m_ObjectHideFlags: 0
@@ -1069,7 +1086,7 @@ GameObject:
   - component: {fileID: 2965976161090522584}
   - component: {fileID: 3353654001703704940}
   m_Layer: 5
-  m_Name: CharacterIllustration
+  m_Name: CharacterImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
