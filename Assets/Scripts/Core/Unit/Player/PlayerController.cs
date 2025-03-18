@@ -8,6 +8,9 @@ namespace Core.Unit.Player
 {
     public class PlayerController : MonoBehaviour
     {
+        public static PlayerController instance { get; private set; }
+
+
         public float moveSpeed = 5f;
         public float jumpHeight = 2f;
         public float gravity = -9.81f;
@@ -18,7 +21,7 @@ namespace Core.Unit.Player
 
         public float rotationSpeed = 10f;
 
-        public float fallThreshold = -15f;  // 낙하 감지 높이
+        public float fallThreshold = -15f; 
 
         private float sprintTimer = 0f;
         private float sprintCooldownTimer = 0f;
@@ -27,7 +30,7 @@ namespace Core.Unit.Player
 
         private Vector3 velocity;
         private Vector3 wallNormal;
-        private Vector3 lastSafePosition; // 마지막 안전한 위치 저장
+        private Vector3 lastSafePosition; 
 
         [SerializeField]
         private bool isGrounded;
@@ -41,43 +44,54 @@ namespace Core.Unit.Player
         private bool isSprinting = false;
         private bool canSprint = true;
 
+        private bool isJumpingUp = false;
+
         private Animator animator;
         private CharacterController controller;
+
+        private void Awake()
+        {
+            if(instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+
+                return;
+            }
+        }
 
         void Start()
         {
             animator = GetComponent<Animator>();
             controller = GetComponent<CharacterController>();
-            lastSafePosition = transform.position;  // 초기 안전한 위치 저장
+            lastSafePosition = transform.position;  
         }
 
         void Update()
         {
-            HandleGroundCheck();
-            
-
-            if (isWallHanging)
+            // 점프했거나 벽붙기 입력이 있을 때만 벽 체크
+            if (isJumped || InputManager.instance.wallAttach)
             {
-                HandleWallCheck();
-                HandleWallHangMovement();
-            }
-            else
-            {
-
-                if (isJumped || InputManager.instance.wallAttach)
-                {
-                    HandleWallCheck(); // 점프했거나 벽붙기 입력이 있을 때만 벽 체크
-                }
-
-                HandleSprint();
-                HandleMovement();
-                HandleJump();
-                ApplyGravity();
+                HandleWallCheck(); 
             }
 
-            CheckFall();  // 낙하 체크 추가
+            HandleSprint();
+            HandleMovement();
+            HandleJump();
+            ApplyGravity();
         }
 
+        private void FixedUpdate()
+        {
+            HandleGroundCheck();
+            CheckFall(); 
+        }
+
+        // 달리기 관리하는 함수
         void HandleSprint()
         {
             if(InputManager.instance.sprint && canSprint)
@@ -110,8 +124,18 @@ namespace Core.Unit.Player
         }
 
 
+        // 기본 이동 관리 함수
         void HandleMovement()
         {
+          
+            if (isWallHanging)
+            {
+                HandleWallCheck();
+                HandleWallHangMovement();
+
+                return;
+            }
+
             float speed = isSprinting ? moveSpeed * 1.5f : moveSpeed;
             Vector3 move = new Vector3(InputManager.instance.horizontal, 0, InputManager.instance.vertical).normalized;
 
@@ -129,16 +153,25 @@ namespace Core.Unit.Player
             }
         }
 
+        // 점프 관리 함수
         void HandleJump()
         {
             if (isGrounded && InputManager.instance.jump && !isTouchingWall)
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
                 isJumped = true;
+                HandleWallCheck();
                 animator.SetTrigger("Jump");
+            }
+
+            if(velocity.y > 0)
+            {
+                isJumpingUp = true;
             }
         }
 
+
+        // 지면 체크 함수
         void HandleGroundCheck()
         {
             RaycastHit hit;
@@ -151,10 +184,10 @@ namespace Core.Unit.Player
                 isWallHanging = false;
                 isTouchingWall = false;
 
-                animator.SetBool("WallHanging", false); // 벽 매달리기 해제
-                animator.SetFloat("MoveSpeed", 0f); // 기본 이동 애니메이션 설정
+                animator.SetBool("WallHanging", false);
+                animator.SetFloat("MoveSpeed", 0f);
 
-                lastSafePosition = transform.position;  // 안전한 위치 갱신
+                lastSafePosition = transform.position; 
             }
             else
             {
@@ -162,53 +195,51 @@ namespace Core.Unit.Player
             }
         }
 
+
+        // 벽 체크 함수
         void HandleWallCheck()
         {
             RaycastHit hit;
-            float wallRayLength = 0.3f; // 감지 거리 조정
-            float sphereRadius = 0.2f;  // 감지 반경 확장
-            float wallAttachThreshold = 0.2f; // 벽 근처 감지 거리 (이보다 가까우면 자동으로 붙지 않음)
+            float wallRayLength = 0.4f; 
 
-            Vector3 rayStart = transform.position + Vector3.up * 0.25f;
+            Vector3 rayStart = transform.position;
             Debug.DrawRay(rayStart, transform.forward * wallRayLength, Color.red, 0.1f);
 
-            // SphereCast를 사용하여 감지 성능 향상
-            if (Physics.SphereCast(rayStart, sphereRadius, transform.forward, out hit, wallRayLength))
+            if (Physics.Raycast(rayStart, transform.forward, out hit, wallRayLength))
             {
-                if (hit.collider.CompareTag("Ground")) // 벽이 Ground 태그를 가질 때만 적용
-                {  
-                    wallNormal = hit.normal;
+                if (hit.collider.CompareTag("Ground")) 
+                {
+                    wallNormal = hit.normal;                  
 
-                    float distanceToWall = Vector3.Distance(transform.position, hit.point); // 벽과의 거리 측정
-
-                    // 플레이어가 벽과 가까우면 벽붙기 입력이 필요
-                    if (!isGrounded && isJumped && distanceToWall > wallAttachThreshold)
+                   
+                    bool isMoving = InputManager.instance.horizontal != 0 || InputManager.instance.vertical != 0;
+  
+                    if (!isGrounded && !isJumpingUp && isMoving)
                     {
                         isTouchingWall = true;
                         isWallHanging = true;
                         velocity.y = 0;
                         animator.SetBool("WallHanging", true);
                     }
-                    else if (isGrounded && InputManager.instance.wallAttach)
+                    else if (isGrounded && InputManager.instance.wallAttach && isMoving)
                     {
                         isTouchingWall = true;
-                        // 벽 근처에서는 wallAttach 입력이 있어야만 벽에 붙을 수 있음
                         isWallHanging = true;
                         velocity = Vector3.zero;
                         animator.SetBool("WallHanging", true);
-                        controller.Move(Vector3.up * 0.2f); // 플레이어를 살짝 올려줌
+                        controller.Move(Vector3.up * 0.2f); 
                     }
 
-                    lastSafePosition = transform.position;  // 벽에서 매달려도 안전한 위치 갱신
+                    lastSafePosition = transform.position;
                     return;
                 }
             }
 
-            // 벽 감지가 실패하면 isTouchingWall을 false로 설정
             isTouchingWall = false;
             animator.SetBool("WallHanging", false);
         }
 
+        // 벽 매달렸을 때 이동 관리 함수
         void HandleWallHangMovement()
         {
             velocity.y = wallHangGravity;
@@ -221,36 +252,35 @@ namespace Core.Unit.Player
             Vector3 wallMove = (Vector3.up * verticalMove) + (transform.right * horizontalMove);
             controller.Move(wallMove);
 
-            // 벽에서 떨어졌다면 매달리기 상태 해제
             if (!isTouchingWall)
             {
                 isWallHanging = false;
                 animator.SetBool("WallHanging", false);
             }
 
-            if (isWallHanging && InputManager.instance.jump)
+            if (isWallHanging && InputManager.instance.wallJump)
             {
                 isWallHanging = false;
                 isTouchingWall = false;
                 animator.SetTrigger("WallJump");
                 animator.SetBool("WallHanging", false);
-
-                // 플레이어가 보고 있는 방향의 반대 방향으로 점프
-                Vector3 jumpDirection = -transform.forward; // 현재 바라보는 방향의 반대 방향
-                controller.Move(jumpDirection * 0.5f); // 살짝 밀어내는 효과 추가
-
-                // 기존 점프력 유지
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             }
         }
 
-
+        // 중력 함수
         void ApplyGravity()
         {
             velocity.y += gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
+
+            if (velocity.y <= 0)
+            {
+                isJumpingUp = false; 
+            }
         }
 
+
+        // 낙하 관리 함수
         void CheckFall()
         {
             if (transform.position.y < fallThreshold)
@@ -259,12 +289,13 @@ namespace Core.Unit.Player
             }
         }
 
+        // 리스폰 함수
         void Respawn()
         {
-            controller.enabled = false;  // 충돌 방지를 위해 비활성화
+            controller.enabled = false;  
             transform.position = lastSafePosition;
             velocity = Vector3.zero;
-            controller.enabled = true;  // 다시 활성화
+            controller.enabled = true; 
             Debug.Log("플레이어가 떨어져서 마지막 안전한 위치로 복귀");
         }
     }

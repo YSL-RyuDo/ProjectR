@@ -8,12 +8,16 @@ namespace Core.Interactable.Portal
 {
     public class Portal : MonoBehaviour, Interactable
     {
+        public string portalID; // 포탈 고유 ID 
+        public string targetPortalID; //연결된 포탈 고유 ID 
+
         public string targetSceneName; // 이동할 씬 이름
 
         public void Interact()
         {
             Debug.Log("포탈");
-            
+
+            SceneConvertManager.instance.SetNextSpawnPortal(targetPortalID);
             SceneConvertManager.instance.LoadScene(targetSceneName);
         }
     }
