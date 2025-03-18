@@ -19,7 +19,6 @@ namespace Core.Camera
 
         private void Awake()
         {
-            // 싱글톤 설정 (중복 생성 방지)
             if (instance == null)
             {
                 instance = this;
