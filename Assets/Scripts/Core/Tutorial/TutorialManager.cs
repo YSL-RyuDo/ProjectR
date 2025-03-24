@@ -46,6 +46,7 @@ namespace Core.Tutorial
         void Update()
         {
             currentState?.UpdateState(this);
+
         }
 
         // 튜토리얼 시작

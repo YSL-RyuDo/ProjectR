@@ -15,9 +15,10 @@ namespace Core.Interactable.Portal
 
         public void Interact()
         {
+
             Debug.Log("Æ÷Å»");
 
-            SceneConvertManager.instance.SetNextSpawnPortal(targetPortalID);
+            SceneConvertManager.instance.SetNextSpawnPortal(portalID, targetPortalID);
             SceneConvertManager.instance.LoadScene(targetSceneName);
         }
     }
