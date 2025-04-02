@@ -49,7 +49,6 @@ namespace Core.Tutorial
         void Update()
         {
             currentState?.UpdateState(this);
-            Debug.Log(CurrentStep);
         }
 
         // 튜토리얼 시작

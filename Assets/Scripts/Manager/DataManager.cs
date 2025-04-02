@@ -33,7 +33,7 @@ namespace Manager.DataManger
             var list = DataParser.ParseArray<ItemData>(textAsset);
             itemDataDict = list.ToDictionary(item => item.id);
 
-            Debug.Log("<color=cyan>[DataManager]</color> 소비 아이템 로딩 완료:");
+            Debug.Log("소비 아이템 로딩 완료:");
             foreach (var item in itemDataDict.Values)
             {
                 Debug.Log($"ID: {item.id}, 이름: {item.itemName}");
