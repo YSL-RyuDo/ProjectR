@@ -1,0 +1,20 @@
+[
+    {
+        "id": "potion001",
+        "itemName": "Healing Potion",
+        "description": "Heals 50 HP.",
+        "iconPath": "Icons/Potion",
+        "type": "Consumable",
+        "maxStack": 20,
+        "healAmount": 50
+    },
+    {
+        "id": "potion002",
+        "itemName": "Big Potion",
+        "description": "Heals 100 HP.",
+        "iconPath": "Icons/BigPotion",
+        "type": "Consumable",
+        "maxStack": 10,
+        "healAmount": 100
+    }
+]

@@ -21,6 +21,7 @@ namespace Core.Tutorial
 
             platform = tutorial.GetPlatform(targetPosition);
             platformScript = platform.GetComponent<TargetPlatform>();
+            tutorial.SetStep(TutorialStep.MoveRight);
         }
 
         public void UpdateState(TutorialManager tutorial)

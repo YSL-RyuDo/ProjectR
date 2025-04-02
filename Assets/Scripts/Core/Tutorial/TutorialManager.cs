@@ -10,6 +10,7 @@ namespace Core.Tutorial
     public class TutorialManager : MonoBehaviour
     {
         private TutorialState currentState;
+
         private bool isNPCInteracted = false;
 
         public GameObject[] portals;
@@ -18,7 +19,9 @@ namespace Core.Tutorial
 
         public GameObject platformPrefab; 
 
-        private bool tutorial1Completed = false; 
+        private bool tutorial1Completed = false;
+
+        public TutorialStep CurrentStep { get; private set; } = TutorialStep.MoveRight;
 
         public static TutorialManager instance { get; private set; }
 
@@ -46,7 +49,7 @@ namespace Core.Tutorial
         void Update()
         {
             currentState?.UpdateState(this);
-
+            Debug.Log(CurrentStep);
         }
 
         // 튜토리얼 시작
@@ -61,6 +64,12 @@ namespace Core.Tutorial
             currentState = newState;
             currentState.EnterState(this);
         }
+
+        public void SetStep(TutorialStep step)
+        {
+            CurrentStep = step;
+        }
+
 
 
         // NPC 상호작용 여부 
