@@ -16,6 +16,8 @@ namespace Core.UI.Dialogue
         public TMP_Text dialogueText;
         public TMP_Text nameText;
 
+        public GameObject Panel;
+
         public static DialogueManager instance { get; private set; }
 
         void Awake()
@@ -36,7 +38,7 @@ namespace Core.UI.Dialogue
         {
             if(InputManager.instance.escButton)
             {
-                ESCButtonClick();
+                ESCButtonOnClick();
             }
         }
 
@@ -48,15 +50,25 @@ namespace Core.UI.Dialogue
             dialoguePanel.SetActive(true);
         }
 
+        public void ESCButtonOnClick()
+        {
+            if (InputManager.instance.escButton)
+            {
+                Panel.SetActive(false);
+            }
+            Panel.SetActive(false);
+        }
+
         public void NextButtonClick()
         {
-
+            if (InputManager.instance.spaceButton)
+            {
+                Panel.SetActive(false);
+            }
+            Panel.SetActive(false);
         }
 
-        public void ESCButtonClick()
-        {
-            dialoguePanel.SetActive(false);
-        }
+
 
     }
 }

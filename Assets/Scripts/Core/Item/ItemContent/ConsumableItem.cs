@@ -8,6 +8,8 @@ namespace Core.Item
     {
         public int Amount { get; private set; }
 
+        public override ItemType Type => ItemType.Consumable;
+
         public ConsumableItem(string id, string name, Sprite icon, int amount)
             : base(id, name, icon)
         {

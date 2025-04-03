@@ -7,11 +7,26 @@ namespace Core.Inventory
 {
     public class Inventory : MonoBehaviour
     {
+        public static Inventory instance { get; private set; }
+
         private List<Core.Item.Item> items = new();
 
         [SerializeField] private int maxSlotCount = 20;
 
         public IReadOnlyList<Core.Item.Item> Items => items;
+
+        private void Awake()
+        {
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject); 
+            }
+        }
 
         public bool AddItem(Core.Item.Item newItem)
         {
@@ -21,7 +36,9 @@ namespace Core.Inventory
                 return false;
             }
 
+            Debug.Log("æ∆¿Ã≈€ »πµÊ");
             items.Add(newItem);
+            Core.UI.Inventory.InventoryUI.instance?.Refresh();
             return true;
         }
 

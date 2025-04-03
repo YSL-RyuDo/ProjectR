@@ -1,0 +1,9 @@
+[
+    {
+        "id": "misc001",
+        "itemName": "Shiny Rock",
+        "description": "Just a shiny rock.",
+        "iconPath": "Icons/ShinyRock",
+        "type": "Misc"
+    }
+]
